@@ -31,7 +31,6 @@ module.exports = {
                 firstname: newUser.firstname,
                 email: newUser.email,
             });
-            console.log("User registered successfully");
         } catch (error) {
             res.status(500).send({
                 message: error.message || "Cannot register User",

@@ -30,8 +30,6 @@ const swaggerOptions = {
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
-console.log(swaggerDocs);
-
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 mongoose
