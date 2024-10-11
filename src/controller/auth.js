@@ -34,7 +34,7 @@ module.exports = {
             console.log("User registered successfully");
         } catch (error) {
             res.status(500).send({
-                message: error.message || "Cannot register User",
+                message: error.message || "Impossibe d'enregistrer l'utilisateur",
             });
         }
     },
