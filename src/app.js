@@ -22,13 +22,17 @@ const swaggerOptions = {
         openapi: "3.0.0",
         info: {
             title: "Book API",
-            version: "1.0.0",
+            version: "1.1.0",
         },
     },
-    apis: ["./routes/*.js"],
+    apis: ["./src/routes/*.js"],
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
+
+console.log(swaggerDocs);
+
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 mongoose
     .connect(process.env.DATABASE_URL)
@@ -38,8 +42,6 @@ mongoose
     .catch((error) => {
         console.log(`Database connection error ${error}`);
     });
-
-app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 app.use("/api/", apiRouter);
 

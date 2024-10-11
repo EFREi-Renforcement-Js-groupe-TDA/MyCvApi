@@ -8,15 +8,23 @@ module.exports = {
         try {
             verifyUser(req.body);
             const { firstname, lastname, email, password } = req.body;
+
+            const existingUser = await UserModel.findOne({ email });
+            if (existingUser) {
+                return res.status(400).send({
+                    message: "Email already exists",
+                });
+            }
+
             const hash = await bcrypt.hash(password, 10);
             const newUser = new UserModel({
                 firstname,
                 lastname,
-                email, // email: email
+                email,
                 password: hash,
             });
 
-            newUser.save();
+            await newUser.save();
             res.status(201).send({
                 id: newUser._id,
                 lastname: newUser.lastname,
@@ -25,7 +33,7 @@ module.exports = {
             });
             console.log("User registered successfully");
         } catch (error) {
-            res.send({
+            res.status(500).send({
                 message: error.message || "Cannot register User",
             });
         }
