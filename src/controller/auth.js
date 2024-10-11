@@ -8,15 +8,23 @@ module.exports = {
         try {
             verifyUser(req.body);
             const { firstname, lastname, email, password } = req.body;
+
+            const existingUser = await UserModel.findOne({ email });
+            if (existingUser) {
+                return res.status(400).send({
+                    message: "Un compte avec cet email existe déjà",
+                });
+            }
+
             const hash = await bcrypt.hash(password, 10);
             const newUser = new UserModel({
                 firstname,
                 lastname,
-                email, // email: email
+                email,
                 password: hash,
             });
 
-            newUser.save();
+            await newUser.save();
             res.status(201).send({
                 id: newUser._id,
                 lastname: newUser.lastname,
@@ -24,53 +32,39 @@ module.exports = {
                 email: newUser.email,
             });
         } catch (error) {
-            res.send({
-                message: error.message || "Cannot register User",
+            res.status(500).send({
+                message: error.message || "Impossibe d'enregistrer l'utilisateur",
             });
         }
     },
 
     login: async (req, res) => {
         const { email, password } = req.body;
-        const user = await UserModel.findOne({
-            email, // email: email
-        });
+        const user = await UserModel.findOne({ email });
 
         if (!user) {
-            res.status(401).send({
+            return res.status(401).send({
                 message: "User not exist",
             });
         }
 
         const checkPassword = await bcrypt.compare(password, user.password);
-        if (checkPassword) {
-            const jwtOptions = {
-                expiresIn: process.env.JWT_TIMOEOUTE_DURATION || "1h",
-            };
-            const secret = process.env.JWT_SECRET || "secret";
-
-            //generation du token jwt
-            const token = jwt.sign(
-                {
-                    userId: user.id,
-                },
-                secret,
-                jwtOptions,
-            );
-
-            res.send({
-                message: "Login successfully",
-                user: {
-                    id: user.id,
-                    firstname: user.firstname,
-                    lastname: user.lastname,
-                    token,
-                },
-            });
-        } else {
-            res.status(401).send({
-                messsage: "Wrong login informations",
+        if (!checkPassword) {
+            return res.status(401).send({
+                message: "Incorrect password",
             });
         }
+
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || "secret", { expiresIn: "1h" });
+        res.send({
+            message: "Login successful",
+            user: {
+                id: user.id,
+                email: user.email,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                token,
+            },
+        });
     },
 };

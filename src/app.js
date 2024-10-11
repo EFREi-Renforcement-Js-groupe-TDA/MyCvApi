@@ -8,7 +8,12 @@ const swaggerUI = require("swagger-ui-express");
 const apiRouter = require("./routes");
 const cors = require("cors");
 
-app.use(cors());
+const corsOptions = {
+    origin: "http://localhost:8001",
+    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 
@@ -17,13 +22,15 @@ const swaggerOptions = {
         openapi: "3.0.0",
         info: {
             title: "MyCv API",
-            version: "1.0.0",
+            version: "1.1.0",
         },
     },
-    apis: ["./routes/*.js"],
+    apis: ["./src/routes/*.js"],
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
+
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 mongoose
     .connect(process.env.DATABASE_URL)
@@ -33,8 +40,6 @@ mongoose
     .catch((error) => {
         console.log(`Database connection error ${error}`);
     });
-
-app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 app.use("/api/", apiRouter);
 
