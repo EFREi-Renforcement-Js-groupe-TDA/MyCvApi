@@ -23,6 +23,7 @@ module.exports = {
                 firstname: newUser.firstname,
                 email: newUser.email,
             });
+            console.log("User registered successfully");
         } catch (error) {
             res.send({
                 message: error.message || "Cannot register User",
