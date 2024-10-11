@@ -12,7 +12,7 @@ module.exports = {
             const existingUser = await UserModel.findOne({ email });
             if (existingUser) {
                 return res.status(400).send({
-                    message: "Email already exists",
+                    message: "Un compte avec cet email existe déjà",
                 });
             }
 
