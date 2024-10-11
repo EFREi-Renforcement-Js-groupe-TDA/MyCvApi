@@ -68,6 +68,8 @@ module.exports = {
                     token,
                 },
             });
+
+            console.log("User logged in successfully");
         } else {
             res.status(401).send({
                 messsage: "Wrong login informations",
