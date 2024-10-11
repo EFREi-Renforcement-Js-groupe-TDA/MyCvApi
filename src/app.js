@@ -21,7 +21,7 @@ const swaggerOptions = {
     swaggerDefinition: {
         openapi: "3.0.0",
         info: {
-            title: "Book API",
+            title: "MyCv API",
             version: "1.1.0",
         },
     },
