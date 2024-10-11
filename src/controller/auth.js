@@ -33,47 +33,31 @@ module.exports = {
 
     login: async (req, res) => {
         const { email, password } = req.body;
-        const user = await UserModel.findOne({
-            email, // email: email
-        });
+        const user = await UserModel.findOne({ email });
 
         if (!user) {
-            res.status(401).send({
+            return res.status(401).send({
                 message: "User not exist",
             });
         }
 
         const checkPassword = await bcrypt.compare(password, user.password);
-        if (checkPassword) {
-            const jwtOptions = {
-                expiresIn: process.env.JWT_TIMOEOUTE_DURATION || "1h",
-            };
-            const secret = process.env.JWT_SECRET || "secret";
-
-            //generation du token jwt
-            const token = jwt.sign(
-                {
-                    userId: user.id,
-                },
-                secret,
-                jwtOptions,
-            );
-
-            res.send({
-                message: "Login successfully",
-                user: {
-                    id: user.id,
-                    firstname: user.firstname,
-                    lastname: user.lastname,
-                    token,
-                },
-            });
-
-            console.log("User logged in successfully");
-        } else {
-            res.status(401).send({
-                messsage: "Wrong login informations",
+        if (!checkPassword) {
+            return res.status(401).send({
+                message: "Incorrect password",
             });
         }
+
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || "secret", { expiresIn: "1h" });
+        res.send({
+            message: "Login successful",
+            user: {
+                id: user.id,
+                email: user.email,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                token,
+            },
+        });
     },
 };
