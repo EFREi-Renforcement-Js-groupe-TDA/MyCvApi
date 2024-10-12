@@ -2,12 +2,13 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const UserModel = require("./../models/User");
 const { verifyUser } = require("../validator/user");
+const Role = require("../models/Role");
 
 module.exports = {
     register: async (req, res) => {
         try {
             verifyUser(req.body);
-            const { firstname, lastname, email, password } = req.body;
+            const { firstname, lastname, email, password, role } = req.body;
 
             const existingUser = await UserModel.findOne({ email });
             if (existingUser) {
@@ -22,6 +23,7 @@ module.exports = {
                 lastname,
                 email,
                 password: hash,
+                role: role || Role.USER,
             });
 
             await newUser.save();
@@ -30,6 +32,7 @@ module.exports = {
                 lastname: newUser.lastname,
                 firstname: newUser.firstname,
                 email: newUser.email,
+                role: newUser.role,
             });
         } catch (error) {
             res.status(500).send({
@@ -63,6 +66,7 @@ module.exports = {
                 email: user.email,
                 firstname: user.firstname,
                 lastname: user.lastname,
+                role: user.role,
                 token,
             },
         });
