@@ -35,6 +35,7 @@ module.exports = {
                     type: "string",
                     enum: [Role.ADMIN, Role.USER],
                     errorMessage: "Role is invalid",
+                    default: Role.USER,
                 },
             },
             required: ["firstname", "lastname", "email", "password"],

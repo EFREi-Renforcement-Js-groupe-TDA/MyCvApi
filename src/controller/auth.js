@@ -71,4 +71,55 @@ module.exports = {
             },
         });
     },
-};
+
+    editUser: async (req, res) => {
+        const { id } = req.params
+        const updateData = req.body
+        try {
+            const user = await UserModel.findById(id);
+
+            if(!user) {
+                return res.status(404).send({
+                    message: "Utilisateur inexistant"
+                })
+            }
+
+            Object.keys(updateData).forEach(key => {
+                if(updateData[key] !== user[key]) {
+                    user[key] = updateData[key]
+                }
+            });
+            
+            await user.save();
+
+            res.status(200).send({
+                message: "Information utilisateur modifié avec succès",
+                user: user
+            });
+        } catch(error){
+            res.status(400).send({
+                message: "Erreur lors de la modification des informations utilisateur",
+                error : error.message
+            })
+        }
+    },
+
+    deleteUser : async (req, res) => {
+        const { id } = req.params
+        try {
+            const user = await UserModel.findByIdAndDelete(id)
+            if (!user) {
+                return res.status(404).send({
+                    message: "User not found"
+                })
+            }
+            res.send({
+                message: "User deleted successfully"
+            })
+        } catch (error) {
+            res.status(500).send({
+                message: error.message || "Error while deleting user"
+            })
+        }
+    }
+}
