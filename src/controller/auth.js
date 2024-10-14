@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const UserModel = require("./../models/User");
 const { verifyUser } = require("../validator/user");
-const Role = require("../models/Role");
+const Role = require("../enum/RolesEnum");
 
 module.exports = {
     register: async (req, res) => {
@@ -47,20 +47,20 @@ module.exports = {
 
         if (!user) {
             return res.status(401).send({
-                message: "User not exist",
+                message: "L'utilisateur n'existe pas",
             });
         }
 
         const checkPassword = await bcrypt.compare(password, user.password);
         if (!checkPassword) {
             return res.status(401).send({
-                message: "Incorrect password",
+                message: "Le mot de passe est incorrect",
             });
         }
 
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || "secret", { expiresIn: "1h" });
         res.send({
-            message: "Login successful",
+            message: "Connexion réussie",
             user: {
                 id: user.id,
                 email: user.email,
@@ -70,24 +70,6 @@ module.exports = {
                 token,
             },
         });
-    },
-
-    deleteUser: async (req, res) => {
-        try {
-            const user = await UserModel.findByIdAndDelete(req.params.id);
-            if (!user) {
-                return res.status(404).send({
-                    message: "Utilisateur non trouvé",
-                });
-            }
-            res.send({
-                message: "Utilisateur supprimé avec succès",
-            });
-        } catch (error) {
-            res.status(500).send({
-                message: error.message || "Impossible de supprimer l'utilisateur",
-            });
-        }
     },
 
     editInfo: async (req, res) => {
@@ -126,6 +108,24 @@ module.exports = {
         } catch (error) {
             res.status(500).send({
                 message: error.message || "Impossible de mettre à jour les informations",
+            });
+        }
+    },
+
+    deleteUser: async (req, res) => {
+        try {
+            const user = await UserModel.findByIdAndDelete(req.params.id);
+            if (!user) {
+                return res.status(404).send({
+                    message: "Utilisateur non trouvé",
+                });
+            }
+            res.send({
+                message: "Utilisateur supprimé avec succès",
+            });
+        } catch (error) {
+            res.status(500).send({
+                message: error.message || "Impossible de supprimer l'utilisateur",
             });
         }
     },

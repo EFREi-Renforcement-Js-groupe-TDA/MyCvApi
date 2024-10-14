@@ -1,10 +1,10 @@
 const { Validator } = require("jsonschema");
-const Role = require("../models/Role");
+const Role = require("../enum/RolesEnum");
 
 module.exports = {
     verifyUser: (user) => {
         if (!user) {
-            throw new Error("User Information not provide");
+            throw new Error("User Information not provided");
         }
         let validator = new Validator();
         let userSchema = {
