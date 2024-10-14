@@ -1,4 +1,5 @@
 const { Validator } = require("jsonschema");
+const Role = require("../enum/RolesEnum");
 
 module.exports = {
     verifyUser: (user) => {
@@ -29,6 +30,12 @@ module.exports = {
                     minLength: 6,
                     errorMessage: "password is invalid",
                     pattern: "^(?=.*[A-Z])(?=.*[0-9]).+$", // Le password doit contenir au moins une majuscule et 1 chiffre
+                },
+                role: {
+                    type: "string",
+                    enum: [Role.ADMIN, Role.USER],
+                    errorMessage: "Role is invalid",
+                    default: Role.USER,
                 },
             },
             required: ["firstname", "lastname", "email", "password"],
