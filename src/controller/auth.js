@@ -72,45 +72,52 @@ module.exports = {
         });
     },
 
-    editUser: async (req, res) => {
-        const { id } = req.params;
-        const updateData = req.body;
+    editInfo: async (req, res) => {
         try {
-            const user = await UserModel.findById(id);
+            let token = req.headers["authorization"].replace("Bearer ", "");
+            const { userId } = jwt.verify(token, process.env.JWT_SECRET || "secret");
+            const requestingUser = await UserModel.findById(userId);
+            const user = await UserModel.findById(req.params.id);
 
-            if (!user) {
-                return res.status(404).send({
-                    message: "Utilisateur inexistant",
+            if (requestingUser.role !== Role.ADMIN && requestingUser._id.toString() !== user._id.toString()) {
+                return res.status(403).send({
+                    message: "Vous n'êtes pas autorisé à changer les informations de cet utilisateur.",
                 });
             }
 
-            Object.keys(updateData).forEach((key) => {
-                if (updateData[key] !== user[key]) {
-                    user[key] = updateData[key];
-                }
-            });
+            user.firstname = req.body.firstname || user.firstname;
+            user.lastname = req.body.lastname || user.lastname;
+            user.email = req.body.email || user.email;
+            if (req.body.password) {
+                user.password = await bcrypt.hash(req.body.password, 10);
+            }
+            user.role = req.body.role || user.role;
 
             await user.save();
 
-            res.status(200).send({
-                message: "Les nformations de l'utilisateur ont été modifiées avec succès",
-                user: user,
+            res.send({
+                message: "Informations mis à jour avec succès",
+                user: {
+                    id: user._id,
+                    firstname: user.firstname,
+                    lastname: user.lastname,
+                    email: user.email,
+                    role: user.role,
+                },
             });
         } catch (error) {
-            res.status(400).send({
-                message: "Erreur lors de la modification des informations de l'utilisateur",
-                error: error.message,
+            res.status(500).send({
+                message: error.message || "Impossible de mettre à jour les informations",
             });
         }
     },
 
     deleteUser: async (req, res) => {
-        const { id } = req.params;
         try {
-            const user = await UserModel.findByIdAndDelete(id);
+            const user = await UserModel.findByIdAndDelete(req.params.id);
             if (!user) {
                 return res.status(404).send({
-                    message: "Utilisateur introuvable",
+                    message: "Utilisateur non trouvé",
                 });
             }
             res.send({
@@ -118,7 +125,7 @@ module.exports = {
             });
         } catch (error) {
             res.status(500).send({
-                message: error.message || "Erreur lors de la suppression de l'utilisateur",
+                message: error.message || "Impossible de supprimer l'utilisateur",
             });
         }
     },

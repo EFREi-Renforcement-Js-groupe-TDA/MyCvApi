@@ -1,6 +1,5 @@
 const router = require("express").Router();
 const autController = require("./../controller/auth");
-const { verifyAdmin, verifyUser } = require("./../middlewares/jwt");
 
 /**
  * @swagger
@@ -65,10 +64,38 @@ router.post("/login", autController.login);
 
 /**
  * @swagger
- * /register:
- *   post:
- *     summary: Modification des informations utilisateurs
+ * /{id}:
+ *   delete:
+ *     summary: Supprime un utilisateur
  *     tags: [Auth]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID de l'utilisateur à supprimer
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Utilisateur supprimé avec succès
+ *       401:
+ *         description: Échec de la suppression (authentification requise)
+ *       404:
+ *         description: Utilisateur non trouvé
+ */
+router.delete("/:id", autController.deleteUser);
+
+/**
+ * @swagger
+ * /{id}:
+ *   patch:
+ *     summary: Modifier ses informations
+ *     tags: [Auth]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID de l'utilisateur à modifier
  *     requestBody:
  *       required: false
  *       content:
@@ -84,29 +111,12 @@ router.post("/login", autController.login);
  *                 type: string
  *               password:
  *                 type: string
- *               role:
- *                 type: string
  *     responses:
  *       201:
- *         description: Information utilisateur modifié avec succès
+ *         description: Informations modifés avec succès
  *       400:
  *         description: Requête invalide
  */
-router.patch('/:id', verifyUser, autController.updateUser);
-
-/**
- * @swagger
- * /deleteUser : 
- * delete:
- *      summary: Supprimer un utilisateur
- *      tags: [Auth]
- *      responses:
- *          200:
- *              description: Utilisateur supprimé avec succès
- *          400:
- *              description: Utilisateur introuvable ou requête invalide
- */
-router.delete('/:id', verifyAdmin, autController.deleteUser);
-
+router.patch("/:id", autController.editInfo);
 
 module.exports = router;
