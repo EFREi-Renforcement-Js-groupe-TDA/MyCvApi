@@ -47,20 +47,20 @@ module.exports = {
 
         if (!user) {
             return res.status(401).send({
-                message: "User not exist",
+                message: "L'utilisateur n'existe pas",
             });
         }
 
         const checkPassword = await bcrypt.compare(password, user.password);
         if (!checkPassword) {
             return res.status(401).send({
-                message: "Incorrect password",
+                message: "Le mot de passe est incorrect",
             });
         }
 
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || "secret", { expiresIn: "1h" });
         res.send({
-            message: "Login successful",
+            message: "Connexion réussie",
             user: {
                 id: user.id,
                 email: user.email,
@@ -73,53 +73,53 @@ module.exports = {
     },
 
     editUser: async (req, res) => {
-        const { id } = req.params
-        const updateData = req.body
+        const { id } = req.params;
+        const updateData = req.body;
         try {
             const user = await UserModel.findById(id);
 
-            if(!user) {
+            if (!user) {
                 return res.status(404).send({
-                    message: "Utilisateur inexistant"
-                })
+                    message: "Utilisateur inexistant",
+                });
             }
 
-            Object.keys(updateData).forEach(key => {
-                if(updateData[key] !== user[key]) {
-                    user[key] = updateData[key]
+            Object.keys(updateData).forEach((key) => {
+                if (updateData[key] !== user[key]) {
+                    user[key] = updateData[key];
                 }
             });
-            
+
             await user.save();
 
             res.status(200).send({
-                message: "Information utilisateur modifié avec succès",
-                user: user
+                message: "Les nformations de l'utilisateur ont été modifiées avec succès",
+                user: user,
             });
-        } catch(error){
+        } catch (error) {
             res.status(400).send({
-                message: "Erreur lors de la modification des informations utilisateur",
-                error : error.message
-            })
+                message: "Erreur lors de la modification des informations de l'utilisateur",
+                error: error.message,
+            });
         }
     },
 
-    deleteUser : async (req, res) => {
-        const { id } = req.params
+    deleteUser: async (req, res) => {
+        const { id } = req.params;
         try {
-            const user = await UserModel.findByIdAndDelete(id)
+            const user = await UserModel.findByIdAndDelete(id);
             if (!user) {
                 return res.status(404).send({
-                    message: "User not found"
-                })
+                    message: "Utilisateur introuvable",
+                });
             }
             res.send({
-                message: "User deleted successfully"
-            })
+                message: "Utilisateur supprimé avec succès",
+            });
         } catch (error) {
             res.status(500).send({
-                message: error.message || "Error while deleting user"
-            })
+                message: error.message || "Erreur lors de la suppression de l'utilisateur",
+            });
         }
-    }
-}
+    },
+};
