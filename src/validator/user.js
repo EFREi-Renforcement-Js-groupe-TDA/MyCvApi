@@ -1,5 +1,5 @@
 const { Validator } = require("jsonschema");
-const Role = require("../models/Role");
+const Role = require("../enum/RolesEnum");
 
 module.exports = {
     verifyUser: (user) => {

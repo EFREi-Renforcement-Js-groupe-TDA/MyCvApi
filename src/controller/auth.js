@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const UserModel = require("./../models/User");
 const { verifyUser } = require("../validator/user");
-const Role = require("../models/Role");
+const Role = require("../enum/RolesEnum");
 
 module.exports = {
     register: async (req, res) => {
