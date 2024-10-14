@@ -62,4 +62,61 @@ router.post("/register", autController.register);
  */
 router.post("/login", autController.login);
 
+/**
+ * @swagger
+ * /{id}:
+ *   delete:
+ *     summary: Supprime un utilisateur
+ *     tags: [Auth]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID de l'utilisateur à supprimer
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Utilisateur supprimé avec succès
+ *       401:
+ *         description: Échec de la suppression (authentification requise)
+ *       404:
+ *         description: Utilisateur non trouvé
+ */
+router.delete("/:id", autController.deleteUser);
+
+/**
+ * @swagger
+ * /{id}:
+ *   patch:
+ *     summary: Modifier ses informations
+ *     tags: [Auth]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID de l'utilisateur à modifier
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               firstname:
+ *                 type: string
+ *               lastname:
+ *                 type: string
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Informations modifés avec succès
+ *       400:
+ *         description: Requête invalide
+ */
+router.patch("/:id", autController.editInfo);
+
 module.exports = router;
