@@ -10,10 +10,10 @@ const AuthenticationController = require("./../controller/AuthenticationControll
 
 /**
  * @swagger
- * /register:
+ * /auth/register:
  *   post:
  *     summary: Enregistrement d'un nouvel utilisateur
- *     tags: [Auth]
+ *     tags: [Authentication]
  *     requestBody:
  *       required: true
  *       content:
@@ -39,10 +39,10 @@ router.post("/register", AuthenticationController.register);
 
 /**
  * @swagger
- * /login:
+ * /auth/login:
  *   post:
  *     summary: Authentification de l'utilisateur
- *     tags: [Auth]
+ *     tags: [Authentication]
  *     requestBody:
  *       required: true
  *       content:

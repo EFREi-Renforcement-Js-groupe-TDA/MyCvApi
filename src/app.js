@@ -22,6 +22,7 @@ const swaggerOptions = {
         openapi: "3.0.0",
         info: {
             title: "MyCv API",
+            description: "Swagger for MyCvApi. All routes start with '/api'",
             version: "1.1.0",
         },
     },

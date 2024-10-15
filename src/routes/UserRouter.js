@@ -10,10 +10,10 @@ const UserController = require("./../controller/UserController");
 
 /**
  * @swagger
- * /{id}:
+ * /user/{id}:
  *   patch:
  *     summary: Modifier ses informations
- *     tags: [Auth]
+ *     tags: [User]
  *     parameters:
  *       - in: path
  *         name: id
@@ -44,10 +44,10 @@ router.patch("/:id", UserController.edit);
 
 /**
  * @swagger
- * /{id}:
+ * /user/{id}:
  *   delete:
  *     summary: Supprime un utilisateur
- *     tags: [Auth]
+ *     tags: [User]
  *     parameters:
  *       - in: path
  *         name: id
