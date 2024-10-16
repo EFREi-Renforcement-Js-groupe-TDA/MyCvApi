@@ -28,7 +28,7 @@ module.exports = {
 
     edit: async (req, res) => {
         try {
-            const user = await UserModel.findById(req.params.id);
+            const user = req.params.id ? await UserModel.findById(req.params.id) : null;
             const authenticatedUser = await getAuthenticatedUser(req);
 
             if (!isUserOwner(authenticatedUser, user)) {
