@@ -4,21 +4,27 @@ const { getAuthenticatedUser, isUserOwner, isUserAdmin } = require("../utils/Sec
 
 module.exports = {
     show: async (req, res) => {
-        const user = await UserModel.findById(req.params.id);
-        const authenticatedUser = await getAuthenticatedUser(req);
+        try {
+            const user = req.params.id ? await UserModel.findById(req.params.id) : null;
+            const authenticatedUser = await getAuthenticatedUser(req);
 
-        if (!isUserOwner(authenticatedUser, user)) {
-            return res.status(403).send({
-                message: "Vous n'êtes pas autorisé à voir les informations de cet utilisateur.",
+            if (!isUserOwner(authenticatedUser, user)) {
+                return res.status(403).send({
+                    message: "Vous n'êtes pas autorisé à voir les informations de cet utilisateur.",
+                });
+            }
+
+            res.send({
+                firstname: user.firstname,
+                lastname: user.lastname,
+                email: user.email,
+                role: user.role,
+            });
+        } catch (error) {
+            res.status(500).send({
+                message: error.message || "Erreur 500 : Impossible de récupérer les informations de l'utilisateur",
             });
         }
-
-        res.send({
-            firstname: user.firstname,
-            lastname: user.lastname,
-            email: user.email,
-            role: user.role,
-        });
     },
 
     edit: async (req, res) => {
