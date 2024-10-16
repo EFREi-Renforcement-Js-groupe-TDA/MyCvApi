@@ -11,6 +11,25 @@ const UserController = require("./../controller/UserController");
 /**
  * @swagger
  * /user/{id}:
+ *   get:
+ *     summary: Récupérer ses informations
+ *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID de l'utilisateur à modifier
+ *     responses:
+ *       201:
+ *         description: Récupération des informations
+ *       400:
+ *         description: Requête invalide
+ */
+router.get("/:id", UserController.show);
+
+/**
+ * @swagger
+ * /user/{id}:
  *   patch:
  *     summary: Modifier ses informations
  *     tags: [User]
