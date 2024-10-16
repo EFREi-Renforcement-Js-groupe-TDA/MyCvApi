@@ -18,7 +18,6 @@ module.exports = {
                 firstname: user.firstname,
                 lastname: user.lastname,
                 email: user.email,
-                role: user.role,
             });
         } catch (error) {
             res.status(500).send({
