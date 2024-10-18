@@ -1,6 +1,6 @@
 const CvModel = require("../models/Cv");
 const UserModel = require("../models/User");
-const { getAuthenticatedUser } = require("../utils/Security/SecurityHelper");
+const { getAuthenticatedUser, isUserAdmin, isUserOwner } = require("../utils/Security/SecurityHelper");
 const { verifyCv } = require("../validator/CvValidator");
 
 const CvController = {
@@ -9,6 +9,12 @@ const CvController = {
             const authenticatedUser = await getAuthenticatedUser(req);
 
             verifyCv(req.body);
+
+            if (authenticatedUser.cv) {
+                return res.status(403).json({
+                    message: "Vous avez déjà un CV",
+                });
+            }
 
             if (!authenticatedUser) {
                 return res.status(403).json({
@@ -62,7 +68,7 @@ const CvController = {
                 });
             }
 
-            if (cv.user.toString() !== authenticatedUser._id.toString() || !authenticatedUser.role === "admin") {
+            if (!isUserAdmin(authenticatedUser)) {
                 return res.status(403).send({
                     message: "Vous n'êtes pas autorisé à supprimer ce CV",
                 });
@@ -81,7 +87,7 @@ const CvController = {
             const cv = req.params.id ? await CvModel.findById(req.params.id) : null;
             const authenticatedUser = await getAuthenticatedUser(req);
 
-            if (cv.user.toString() !== authenticatedUser._id.toString()) {
+            if (!isUserAdmin(authenticatedUser) || !isUserOwner(authenticatedUser, cv.user)) {
                 return res.status(403).send({
                     message: "Vous n'êtes pas autorisé à modifier les informations de ce CV",
                 });
