@@ -169,7 +169,7 @@ router.get("/getAllCvId", CvController.findAllCvId);
  *       400:
  *         description: Requête invalide
  */
-router.post("/update/:id", CvController.update);
+router.patch("/update/:id", CvController.update);
 
 /**
  * @swagger

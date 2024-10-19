@@ -5,7 +5,6 @@ const CvSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true,
-        autopopulate: true,
     },
 
     title: {
@@ -58,7 +57,5 @@ const CvSchema = new mongoose.Schema({
 
     language: [String],
 });
-
-CvSchema.plugin(require("mongoose-autopopulate"));
 
 module.exports = mongoose.model("Cv", CvSchema);

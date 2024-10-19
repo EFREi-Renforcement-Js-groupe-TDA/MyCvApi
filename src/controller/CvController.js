@@ -60,7 +60,7 @@ const CvController = {
     delete: async (req, res) => {
         const authenticatedUser = await getAuthenticatedUser(req);
         try {
-            const cv = await CvModel.findByIdAndDelete(req.params.id);
+            const cv = await CvModel.findById(req.params.id).populate("user");
 
             if (!cv) {
                 return res.status(404).send({
@@ -73,6 +73,10 @@ const CvController = {
                     message: "Vous n'êtes pas autorisé à supprimer ce CV",
                 });
             }
+
+            const user = await UserModel.findById(cv.user._id);
+            await user.updateOne({ cv: null });
+            await CvModel.findByIdAndDelete(cv._id);
 
             res.status(200).send({
                 message: "CV supprimé avec succès",
@@ -131,7 +135,7 @@ const CvController = {
 
     findOneCV: async (req, res) => {
         try {
-            const cv = await CvModel.findById(req.params.id);
+            const cv = await CvModel.findById(req.params.id).populate("user");
 
             if (!cv) {
                 return res.status(404).send({
