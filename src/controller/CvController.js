@@ -10,15 +10,15 @@ const CvController = {
 
             verifyCv(req.body);
 
-            if (authenticatedUser.cv) {
-                return res.status(403).json({
-                    message: "Vous avez déjà un CV",
-                });
-            }
-
             if (!authenticatedUser) {
                 return res.status(403).json({
                     message: "Vous devez être connecté(e) pour créer un CV.",
+                });
+            }
+
+            if (authenticatedUser.cv) {
+                return res.status(403).json({
+                    message: "Vous avez déjà un CV",
                 });
             }
 
@@ -68,7 +68,7 @@ const CvController = {
                 });
             }
 
-            if (!isUserAdmin(authenticatedUser)) {
+            if (!isUserAdmin(authenticatedUser) && !isUserOwner(authenticatedUser, cv.user)) {
                 return res.status(403).send({
                     message: "Vous n'êtes pas autorisé à supprimer ce CV",
                 });
@@ -87,7 +87,7 @@ const CvController = {
             const cv = req.params.id ? await CvModel.findById(req.params.id) : null;
             const authenticatedUser = await getAuthenticatedUser(req);
 
-            if (!isUserAdmin(authenticatedUser) || !isUserOwner(authenticatedUser, cv.user)) {
+            if (!isUserOwner(authenticatedUser, cv.user)) {
                 return res.status(403).send({
                     message: "Vous n'êtes pas autorisé à modifier les informations de ce CV",
                 });

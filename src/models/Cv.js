@@ -59,4 +59,6 @@ const CvSchema = new mongoose.Schema({
     language: [String],
 });
 
+CvSchema.plugin(require("mongoose-autopopulate"));
+
 module.exports = mongoose.model("Cv", CvSchema);
