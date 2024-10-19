@@ -42,7 +42,7 @@ const CvSchema = new mongoose.Schema({
     softSkills: [String],
 
     telephone: {
-        type: Number,
+        type: String,
         required: true,
     },
 

@@ -9,11 +9,6 @@ module.exports = {
         let cvSchema = {
             type: "object",
             properties: {
-                user: {
-                    type: "string",
-                    pattern: "^[0-9a-fA-F]{24}$",
-                    errorMessage: "User ID is invalid",
-                },
                 title: {
                     type: "string",
                     minLength: 1,
@@ -58,7 +53,7 @@ module.exports = {
                     items: { type: "string" },
                 },
                 telephone: {
-                    type: "number",
+                    type: "string",
                     errorMessage: "Telephone number is required",
                 },
                 linkedin: {
@@ -75,7 +70,7 @@ module.exports = {
                     items: { type: "string" },
                 },
             },
-            required: ["user", "title", "biography", "telephone", "linkedin", "skills", "softSkills", "language"],
+            required: ["title", "biography", "telephone", "linkedin", "skills", "softSkills", "language"],
         };
 
         let result = validator.validate(cv, cvSchema);
