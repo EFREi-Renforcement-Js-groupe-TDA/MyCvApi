@@ -18,6 +18,7 @@ module.exports = {
                 firstname: user.firstname,
                 lastname: user.lastname,
                 email: user.email,
+                cv: user.cv,
             });
         } catch (error) {
             res.status(500).send({
