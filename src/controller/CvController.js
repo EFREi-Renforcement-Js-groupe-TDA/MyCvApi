@@ -139,7 +139,9 @@ const CvController = {
                 });
             }
 
-            res.status(200).send(cv);
+            res.status(200).send({
+                cv: cv,
+            });
         } catch (error) {
             res.status(500).json({ message: error.message });
         }

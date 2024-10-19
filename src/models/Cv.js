@@ -5,8 +5,15 @@ const CvSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true,
-        autopopulate: true,
     },
+
+    review: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Review",
+            autopopulate: true,
+        },
+    ],
 
     title: {
         type: String,
