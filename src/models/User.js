@@ -29,11 +29,8 @@ const UserSchema = new mongoose.Schema({
     cv: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Cv",
-        autopopulate: true,
         default: null,
     },
 });
-
-UserSchema.plugin(require("mongoose-autopopulate"));
 
 module.exports = mongoose.model("User", UserSchema);

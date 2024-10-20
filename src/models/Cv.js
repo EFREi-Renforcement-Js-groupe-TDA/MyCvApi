@@ -49,7 +49,7 @@ const CvSchema = new mongoose.Schema({
     softSkills: [String],
 
     telephone: {
-        type: Number,
+        type: String,
         required: true,
     },
 
@@ -65,7 +65,5 @@ const CvSchema = new mongoose.Schema({
 
     language: [String],
 });
-
-CvSchema.plugin(require("mongoose-autopopulate"));
 
 module.exports = mongoose.model("Cv", CvSchema);
