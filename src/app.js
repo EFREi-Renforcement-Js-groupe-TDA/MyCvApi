@@ -40,6 +40,7 @@ mongoose
     })
     .catch((error) => {
         console.log(`Database connection error ${error}`);
+        console.log(`Failed to connect to ${process.env.DATABASE_URL}`);
     });
 
 app.use("/api/", apiRouter);
