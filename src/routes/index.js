@@ -1,7 +1,7 @@
 const express = require("express");
 const AuthenticationRouter = require("./AuthenticationRouter");
 const UserRouter = require("./UserRouter");
-const CvRouter = require("./cvRouter");
+const CvRouter = require("./CvRouter");
 const ReviewRouter = require("./ReviewRouter");
 
 const app = express();
