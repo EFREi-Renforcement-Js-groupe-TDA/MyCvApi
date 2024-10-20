@@ -1,5 +1,6 @@
 const ReviewModel = require("../models/Review");
 const CvModel = require("../models/Cv");
+const UserModel = require("../models/User");
 const { getAuthenticatedUser } = require("../utils/Security/SecurityHelper");
 
 module.exports = {
@@ -14,8 +15,9 @@ module.exports = {
                 });
             }
 
+            const fetchedUser = await UserModel.findById(authenticatedUser._id);
             const review = new ReviewModel({
-                user: authenticatedUser._id,
+                user: fetchedUser._id,
                 cv: cv._id,
                 comment: req.body.comment,
             });
@@ -25,7 +27,7 @@ module.exports = {
             await cv.save();
 
             res.status(201).send({
-                user: review.user,
+                user: fetchedUser,
                 cv: review.cv,
                 comment: savedReview.comment,
             });

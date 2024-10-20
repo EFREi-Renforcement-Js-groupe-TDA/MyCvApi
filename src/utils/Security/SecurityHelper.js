@@ -8,9 +8,9 @@ const getAuthenticatedUser = async (req) => {
         const { userId } = jwt.verify(token, process.env.JWT_SECRET);
 
         return UserModel.findById(userId);
-    } catch (error) {
-        console.log(error);
 
+        /* eslint-disable-next-line no-unused-vars */
+    } catch (_error) {
         return null;
     }
 };

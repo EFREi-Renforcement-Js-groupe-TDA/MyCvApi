@@ -19,6 +19,4 @@ const ReviewSchema = new mongoose.Schema({
     },
 });
 
-ReviewSchema.plugin(require("mongoose-autopopulate"));
-
 module.exports = mongoose.model("Review", ReviewSchema);

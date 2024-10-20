@@ -5,7 +5,22 @@ const { getAuthenticatedUser, isUserOwner, isUserAdmin } = require("../utils/Sec
 module.exports = {
     show: async (req, res) => {
         try {
-            const user = req.params.id ? await UserModel.findById(req.params.id).populate("cv") : null;
+            const user = req.params.id
+                ? await UserModel.findById(req.params.id).populate({
+                      path: "cv",
+                      populate: [
+                          {
+                              path: "user",
+                          },
+                          {
+                              path: "review",
+                              populate: {
+                                  path: "user",
+                              },
+                          },
+                      ],
+                  })
+                : null;
             const authenticatedUser = await getAuthenticatedUser(req);
 
             if (!isUserOwner(authenticatedUser, user)) {
