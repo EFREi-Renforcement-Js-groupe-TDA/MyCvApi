@@ -1,5 +1,6 @@
 const CvModel = require("../models/Cv");
 const UserModel = require("../models/User");
+const ReviewModel = require("../models/Review");
 const { getAuthenticatedUser, isUserAdmin, isUserOwner } = require("../utils/Security/SecurityHelper");
 const { verifyCv } = require("../validator/CvValidator");
 
@@ -60,7 +61,7 @@ const CvController = {
     delete: async (req, res) => {
         const authenticatedUser = await getAuthenticatedUser(req);
         try {
-            const cv = await CvModel.findById(req.params.id).populate("user");
+            const cv = await CvModel.findById(req.params.id).populate("user").populate("review");
 
             if (!cv) {
                 return res.status(404).send({
@@ -76,6 +77,7 @@ const CvController = {
 
             const user = await UserModel.findById(cv.user._id);
             await user.updateOne({ cv: null });
+            await ReviewModel.deleteMany({ cv: cv._id });
             await CvModel.findByIdAndDelete(cv._id);
 
             res.status(200).send({
@@ -135,7 +137,15 @@ const CvController = {
 
     findOneCV: async (req, res) => {
         try {
-            const cv = await CvModel.findById(req.params.id).populate("user");
+            const authenticatedUser = await getAuthenticatedUser(req);
+            const cv = await CvModel.findById(req.params.id)
+                .populate("user")
+                .populate({
+                    path: "review",
+                    populate: {
+                        path: "user",
+                    },
+                });
 
             if (!cv) {
                 return res.status(404).send({
@@ -143,15 +153,23 @@ const CvController = {
                 });
             }
 
-            res.status(200).send(cv);
+            if (cv.private && !isUserOwner(authenticatedUser, cv.user) && !isUserAdmin(authenticatedUser)) {
+                return res.status(403).send({
+                    message: "Vous n'êtes pas autorisé à consulter ce CV",
+                });
+            }
+
+            res.status(200).send({
+                cv: cv,
+            });
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
     },
 
-    findAllCvId: async (req, res) => {
+    findAllPublicCv: async (req, res) => {
         try {
-            const cvs = await CvModel.find({}, "_id");
+            const cvs = await CvModel.find({ private: false }).select("_id title user").populate("user");
 
             if (!cvs.length) {
                 return res.status(404).send({
@@ -159,8 +177,15 @@ const CvController = {
                 });
             }
 
-            const cvIds = cvs.map((cv) => cv._id);
-            res.status(200).send(cvIds);
+            const cvDetails = cvs.map((cv) => ({
+                id: cv._id,
+                title: cv.title,
+                user: {
+                    firstname: cv.user.firstname,
+                    lastname: cv.user.lastname,
+                },
+            }));
+            res.status(200).send(cvDetails);
         } catch (error) {
             res.status(500).json({ message: error.message });
         }

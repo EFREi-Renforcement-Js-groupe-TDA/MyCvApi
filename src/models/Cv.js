@@ -7,6 +7,13 @@ const CvSchema = new mongoose.Schema({
         required: true,
     },
 
+    review: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Review",
+        },
+    ],
+
     title: {
         type: String,
         required: true,

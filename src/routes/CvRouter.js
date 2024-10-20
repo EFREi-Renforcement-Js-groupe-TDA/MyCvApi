@@ -83,15 +83,15 @@ router.post("/createCv", CvController.create);
 
 /**
  * @swagger
- * /cv/getAllCvId:
+ * /cv/getAllPubliccv:
  *   get:
- *     summary: Récupérer tous les IDs des CV
+ *     summary: Récupérer tous les des CV publics sans détails
  *     tags: [Cv]
  *     responses:
  *       200:
- *         description: Liste des IDs des CV
+ *         description: Liste de CV avec détails minimalistes
  */
-router.get("/getAllCvId", CvController.findAllCvId);
+router.get("/getAllPublicCv", CvController.findAllPublicCv);
 
 /**
  * @swagger
